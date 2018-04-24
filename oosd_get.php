@@ -2,13 +2,10 @@
 <?php ?>
 <?php
 session_start();
-$host='localhost';
-$user='root';
-$password='';
-$db ='dd';
+
 echo "<h1>Door Delivery</h1>";
 $connection = mysqli_connect('localhost', 'root', '', 'dd');
-if (@mysql_connect($host,$user,$password))
+if (@mysql_connect('localhost', 'root', ''))
 {	
 	if(@mysql_select_db('dd'))
 	{
@@ -40,8 +37,8 @@ if (@mysql_connect($host,$user,$password))
 							
 							$_SESSION['user_id'] = $ddquery_execute['id'];
 							$_SESSION['user_name'] = $ddquery_execute['name'];
-							$_SESSION['tablename'] = '_'.$ddquery_execute['NIC'];
-							
+							//$_SESSION['tablename'] = '_'.'12345678';
+						
 							echo 'welcome'." ".$ddquery_execute['name'].'<br>';
 							
 							// updating last login
@@ -54,13 +51,13 @@ if (@mysql_connect($host,$user,$password))
 							//die("daTabase query failed.");}
 							
 							// redirect to obtions
-							header('Location: dd_obtions.php');
+							header('Location: oosd_obtions.php');
 						}
 						else
 						{
 							//echo 'invalid password';
 							//session_start();
-							header('Location: dd_login.php?loginf');
+							header('Location: oosd_login.php?loginf');
 							echo 'wrong password';
 						}
 					}

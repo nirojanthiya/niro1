@@ -1,5 +1,11 @@
 <?php
 
+echo "new record created sucessfuly";
+
+?>
+
+<?php
+
 session_start();
 
 if (isset($_GET['logout']))
@@ -18,8 +24,8 @@ if (isset($_GET['loginf']))
 <html>
 <body>
 
-<h1>Door Delivery</h1>
-<form action="dd_get.php" method="post">
+<h1>Voccational Training Center</h1>
+<form action="oosd_get.php" method="post">
 <b>Name : <b> <input type="text" name="customer_name">
 <b>ID :<b> <input type="int" name="customer_id">
 <b>Password : <b> <input type="password" name="customer_password">
@@ -27,7 +33,9 @@ if (isset($_GET['loginf']))
 <br>
 <br>
 
-<button type="submit"  name="Login">Login</button>
+<button type="submit"  name="Login">Login</button><p>
+
+<a href="oosd_create_account.php" >Create Account</a>
 </form>
 
 <?php

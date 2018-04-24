@@ -1,34 +1,42 @@
 
 <?php
-session_start();
 require 'dd_functions.php';
-
-///dd_add_customer.php
-$errors = array();
-
-$servername = "localhost";
-		$username   = "root";
-		$password_db   = "";
-		$dbname     = "dd";
-
-		// create connection_aborted
-
-		$conn = mysqli_connect($servername,$username,$password_db,$dbname);
+session_start();
 
 $name = '';
-$id = '';
-$password = '';
 $email = '';
 $nic = '';
 $tp = '';
 $address = '';
 $section = '';
 
+
+// show previous profile
+$conn = mysqli_connect("localhost", "root", "", "dd");
+
+$query = "SELECT * FROM dd1 WHERE id={$_SESSION['user_id']}  ";
+$users = mysqli_query($conn, $query);
+
+if($users)
+{
+	while ($user = mysqli_fetch_assoc($users))
+	{
+		$name=$user['name'];
+		$email=$user['email'];
+		$address=$user['address'];
+		$nic=$user['NIC'];
+		$tp=$user['TPno'];
+		$section=$user['section'];
+	}
+}
+
+///dd_add_customer.php
+$errors = array();
+
 if(isset($_POST['submit']))
 {
 	$name = $_POST['customer_name'];
-	$id = $_POST['customer_id'];
-	$password = $_POST['customer_password'];
+	//password
 	$address = $_POST['customer_address'];
 	$email = $_POST['customer_email'];
 	$nic = $_POST['customer_nic'];
@@ -36,15 +44,14 @@ if(isset($_POST['submit']))
 	$section = $_POST['customer_section'];
 	
 	//checking required fields
-	$reg_fields = array('customer_name', 'customer_id', 
-	         'customer_password','customer_email', 'customer_nic',
-		     'customer_tp','customer_address', 'customer_section');
+	$reg_fields = array('customer_name', 'customer_email', 
+			'customer_nic','customer_tp','customer_address',
+			'customer_section');
 				  
 	$errors = array_merge($errors, check_reg_fields($reg_fields));
 	
 	//checking max length
-	$max_len_fields = array('customer_name' => 5, 'customer_id' => 15, 
-	         'customer_password' => 50,'customer_email' => 15, 
+	$max_len_fields = array('customer_name' => 5,'customer_email' => 15, 
 			 'customer_nic' => 50,'customer_tp' => 50,
              'customer_address' => 50, 'customer_section' => 50);
 				  
@@ -56,7 +63,7 @@ if(isset($_POST['submit']))
 		}
 	}
 	
-	// checking if email is already exists
+	/*// checking if email is already exists
 	$email = mysqli_real_escape_string($conn, $_POST['customer_email']);
 	$query = "SELECT * FROM dd1 WHERE email = '{$email}' LIMIT 1";
 	$result_set = mysqli_query($conn,$query);
@@ -65,8 +72,9 @@ if(isset($_POST['submit']))
 	{
 		if(mysqli_num_rows($result_set) == 1 ){
 		$errors[] = 'Email address already exists';}
-	}
+	}*/
 }
+
 
 
 if(isset($_POST['submit']))
@@ -74,33 +82,37 @@ if(isset($_POST['submit']))
 	if (empty($errors))   ////  opposie to !
 	{
 		
+
+		// create connection_aborted
+
+		//$conn = mysqli_connect($servername,$username,$password_db,$dbname);
 		// check connection 
 		if (!$conn)
 		{
 			die ("connection failed : ". mysqli_connect_error());
 		}
 		
-		// save password as encripted variables
-		$password = mysqli_real_escape_string($conn,$_POST['customer_password']);
-		//$hasshed_password = shal($password);
-
-		$sql = "INSERT INTO dd1 (id, password, email, name, NIC, TPno, address, section)
-				VALUES ('$_POST[customer_id]', '$_POST[customer_password]',
-				'$_POST[customer_email]','$_POST[customer_name]',
-				'$_POST[customer_nic]','$_POST[customer_tp]',
-				'$_POST[customer_address]', '$_POST[customer_section]')";
-			
-		$tablename='_'.$_POST['customer_nic'];
-		//$_SESSION['tablename'] = $tablename;
 		
-		$sqltable =sprintf( "CREATE table %s (ID INT auto_increment, 
-				list VARCHAR(200), date datetime, primary key(ID) )",$tablename);
-				echo $sqltable;
+
+		/*$sql = "UPDATE  dd1 SET( email, name, NIC, TPno, address, section)
+				VALUES ('{$_POST['customer_email']}','{$_POST['customer_name']}',
+				'{$_POST['customer_nic']}','{$_POST['customer_tp']}',
+				'{$_POST['customer_address']}', '{$_POST['customer_section']}') 
+				WHERE id={$_SESSION['user_id']}";*/
+				
+		$sql = "UPDATE dd1 SET ";
+		$sql .= "name = '{$_POST['customer_name']}', ";
+		$sql .= "email = '{$_POST['customer_email']}', ";
+		$sql .= "NIC = '{$_POST['customer_nic']}', ";
+		$sql .= "TPno = '{$_POST['customer_tp']}', ";
+		$sql .= "address = '{$_POST['customer_address']}', ";
+		$sql .= "section = '{$_POST['customer_section']}' ";
+		$sql .= "WHERE id= {$_SESSION['user_id']} ";
+
 		if (mysqli_query($conn, $sql))
 		{
-			if(mysqli_query($conn, $sqltable)){
-			echo "new record created sucessfuly";}
-			//header ('Location: dd_customer_list.php');
+			//echo "new record created sucessfuly";
+			header ('Location: dd_user_profile.php');
 		}
 		else
 		{
@@ -111,17 +123,13 @@ if(isset($_POST['submit']))
 
 
 
-
-
-
-
 ?>
 
 <html>
 <body>
 
-<h1>Door Delivery</h1>
-<form action="dd_create_account.php" method="post">
+<h1>Voccational Training Center</h1>
+<form action="oosd_edit_profile.php" method="post">
 
 <?php 
 if (!empty($errors))
@@ -137,9 +145,10 @@ if (!empty($errors))
 ?>
  Name :  <input   type = "text"  name = "customer_name" maxlength="10"
          <?php echo 'value="' . $name. '"'; ?>><br><br>
- ID :    <input   type = "INT"   name = "customer_id"
-          <?php echo 'value="' . $id. '"'; ?>><br><br>
- Password: <input type = "password" name = "customer_password" required><br><br>
+ 
+ <p> <label for="">Password:</label>
+ <span>******</span> | <a href="oosd_change_password.php">
+             Change Password</a></p>
  Email: <input type = "email" name = "customer_email" 
           <?php echo 'value="' . $email . '"'; ?> ><br><br>
  NIC :   <input   type = "text"  name =  "customer_nic"
@@ -156,6 +165,10 @@ if (!empty($errors))
 <br>
 
 <button type = "submit" name = "submit">Save</button>
+<button type = "submit" name = "back"><a href="oosd_user_profile.php">
+				My Profile</a></button>
+<button type = "submit" name = "home" ><a href ="oosd_obtions.php">
+				Home</a></button>
 </form>
 
 </body>
