@@ -5,7 +5,7 @@ session_start();
 
 $password = '';
 
-// show previous profile
+// show previous profile loghi
 $conn = mysqli_connect("localhost", "root", "", "dd");
 
 /*$query = "SELECT * FROM dd1 WHERE id={$_SESSION['user_id']}  ";
